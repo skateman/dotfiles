@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'octokit'
+require 'netrc'
+
+client = Octokit::Client.new(:netrc => true)
+client.create_pull_request_review(ARGV[0], ARGV[1], :event => 'APPROVE', :body => "![The Seal of Approval](http://www.skateman.eu/seal.jpg)\n#{ARGV[2]}")

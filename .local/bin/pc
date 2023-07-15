@@ -1,0 +1,14 @@
+#!/bin/bash
+
+case $1 in 
+  attach)
+    docker attach $(docker-compose ps | grep _$2_ | cut -d " " -f 1)
+    ;;
+  reattach)
+    docker-compose restart $2
+    docker attach $(docker-compose ps | grep _$2_ | cut -d " " -f 1)
+    ;;
+  *)
+    docker-compose $@
+    ;;
+esac

@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'netrc'
+require 'json'
+
+LAMPS = {
+  'desk' => 'switch.davids_desklamp',
+  'main' => 'switch.davids_lights'
+}.freeze
+
+token = Netrc.read['hub.home.skateman.eu'].password
+
+uri = URI("https://hub.home.skateman.eu:443/api/services/switch/turn_#{ARGV[0]}")
+
+headers = {
+  'Authorization'   => "Bearer #{token}",
+  'Content-Type'    => 'application/json',
+  'Accept-Encoding' => 'none'
+}
+
+params = {
+  'entity_id' => LAMPS[ARGV[1] || 'main']
+}
+
+Net::HTTP.start(uri.host, uri.port, :use_ssl => 'true') do |http|
+  http.post(uri.path, params.to_json, headers)
+end
