@@ -1,0 +1,26 @@
+#!/bin/bash
+
+IMAGE=fedora
+CONTAINER=fedora
+
+is_running () {
+  docker ps --format '{{.Names}}' | grep ${CONTAINER}
+}
+
+is_present () {
+  docker ps -a --format '{{.Repository}}' | grep ${CONTAINER}
+}
+
+
+if [ -z is_running ]; then
+  if [ -z is_present ]; then
+    docker create -d --name ${CONTAINER} -v ${HOME}:/root ${IMAGE} sleep infinity
+  fi
+  docker start ${CONTAINER}
+fi
+
+if [ $# -eq 0 ]; then
+  docker exec -ti ${CONTAINER} zsh
+else
+  docker exec -ti ${CONTAINER} $@
+fi
