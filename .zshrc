@@ -71,6 +71,7 @@ ZSH_THEME="agnoster"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
+  gnu-utils
   dnf
   git
   rbenv
@@ -119,6 +120,7 @@ alias nox="lights off desk"
 alias noxx="lights off main"
 alias podman="docker"
 alias subl=" /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
-alias ls='gls --color --group-directories-first'
+alias ls='ls --color --group-directories-first'
+alias bonfire="/Users/skateman/Library/Python/3.9/bin/bonfire"
 
 export PATH=:~/.local/bin:$PATH
