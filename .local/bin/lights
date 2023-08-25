@@ -5,8 +5,8 @@ require 'netrc'
 require 'json'
 
 LAMPS = {
-  'desk' => 'switch.davids_desklamp',
-  'main' => 'switch.davids_lights'
+  'desk' => 'switch.david_lamp',
+  'main' => 'switch.david_lights'
 }.freeze
 
 token = Netrc.read['hub.home.skateman.eu'].password
