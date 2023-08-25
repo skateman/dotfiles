@@ -3,27 +3,33 @@
 IMAGE=fedora
 CONTAINER=fedora
 
-colima status
+which colima &> /dev/null
 if [ $? -ne 0 ]; then
-  colima start --arch aarch64 --vm-type=vz --vz-rosetta --cpu 4 --memory 8 --disk 40
+  echo -e "Colima not found, possibly not running from the right context"
+  exit 1
 fi
 
-docker ps --format '{{.Names}}' | grep ${CONTAINER}
+colima status &> /dev/null
 if [ $? -ne 0 ]; then
-  docker ps -a --format '{{.Repository}}' | grep ${CONTAINER}
+  colima start --arch aarch64 --vm-type=vz --vz-rosetta --cpu 4 --memory 8 --disk 40 &> /dev/null
+fi
+
+docker ps --format '{{.Names}}' | grep ${CONTAINER} &> /dev/null
+if [ $? -ne 0 ]; then
+  docker ps -a --format '{{.Names}}' | grep ${CONTAINER}  &> /dev/null
   if [ $? -ne 0 ]; then
-    docker create -d --name ${CONTAINER} -v ${HOME}:/root ${IMAGE} sleep infinity
+    docker create -d --name ${CONTAINER} -v ${HOME}:/root ${IMAGE} sleep infinity &> /dev/null
   fi
-  docker start ${CONTAINER}
+  docker start ${CONTAINER} # &> /dev/null
 fi
 
 if [ $# -eq 0 ]; then
-  docker exec -ti ${CONTAINER} zsh
+  docker exec -w ${PWD/#$HOME/'/root'} -ti ${CONTAINER} zsh
 elif [ "${1}" =  "down" ]; then
-  docker stop ${CONTAINER}
+  docker stop ${CONTAINER} &> /dev/null
 elif [ "${1}" =  "halt" ]; then
-  docker stop ${CONTAINER}
-  colima stop
+  docker stop ${CONTAINER} &> /dev/null
+  colima stop &> /dev/null
 else
-  docker exec -ti ${CONTAINER} $@
+  docker exec -w ${PWD/#$HOME/'/root'} -ti ${CONTAINER} $@
 fi
