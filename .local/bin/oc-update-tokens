@@ -4,7 +4,7 @@
 
 require 'yaml'
 
-MANAGED_ENVS = %w[stage prod].freeze
+MANAGED_ENVS = %w[stage prod ephemeral].freeze
 KUBECONFIG = ENV.fetch('KUBECONFIG', "#{Dir.home}/.kube/config")
 
 kubeconfig = YAML.safe_load_file(KUBECONFIG)
