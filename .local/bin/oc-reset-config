@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+require 'yaml'
+
+MANAGED_ENVS = %w[stage prod ephemeral].freeze
+KUBECONFIG = ENV.fetch('KUBECONFIG', "#{Dir.home}/.kube/config")
+
+kubeconfig = YAML.safe_load_file(KUBECONFIG)
+
+kubeconfig['clusters'].select! { |cluster| MANAGED_ENVS.include?(cluster['name']) }
+kubeconfig['contexts'].select! { |context| MANAGED_ENVS.include?(context['context']['cluster']) }
+kubeconfig['users'].select! { |user| MANAGED_ENVS.include?(user['name'].sub(/.*\//, '')) }
+kubeconfig['current-context'] = 'ephemeral-default'
+
+File.open(KUBECONFIG, 'w') { |f| f.write(kubeconfig.to_yaml) }
