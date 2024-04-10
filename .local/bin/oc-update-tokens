@@ -9,6 +9,12 @@ KUBECONFIG = ENV.fetch('KUBECONFIG', "#{Dir.home}/.kube/config")
 
 kubeconfig = YAML.safe_load_file(KUBECONFIG)
 
+# Drop any unmanaged clusters/contexts/users
+kubeconfig['clusters'].select! { |cluster| MANAGED_ENVS.include?(cluster['name']) }
+kubeconfig['contexts'].select! { |context| MANAGED_ENVS.include?(context['context']['cluster']) }
+kubeconfig['users'].select! { |user| MANAGED_ENVS.include?(user['name'].sub(/.*\//, '')) }
+kubeconfig['current-context'] = 'ephemeral-default'
+
 kubeconfig['clusters'].each do |cluster|
   # Only care about our managed environments
   next unless MANAGED_ENVS.include?(cluster['name'])
