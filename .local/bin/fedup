@@ -11,14 +11,15 @@ fi
 
 colima status &> /dev/null
 if [ $? -ne 0 ]; then
-  colima start --arch aarch64 --vm-type=vz --vz-rosetta --cpu 4 --memory 8 --disk 40 &> /dev/null
+  colima start --arch aarch64 --vm-type=vz --vz-rosetta --cpu 4 --memory 8 --disk 40 --mount /tmp/colima:w --mount $HOME:w --mount /Volumes/Repositories:w --ssh-agent &> /dev/null
+  # colima start --arch aarch64 --vm-type=vz --vz-rosetta --cpu 4 --memory 8 --disk 40 &> /dev/null
 fi
 
 docker ps --format '{{.Names}}' | grep ${CONTAINER} &> /dev/null
 if [ $? -ne 0 ]; then
   docker ps -a --format '{{.Names}}' | grep ${CONTAINER}  &> /dev/null
   if [ $? -ne 0 ]; then
-    docker create -d --name ${CONTAINER} -v ${HOME}:/root ${IMAGE} sleep infinity &> /dev/null
+    docker create --name ${CONTAINER} -v ${HOME}:/root -v /Volumes/Repositories:/root/Repositories ${IMAGE} sleep infinity &> /dev/null
   fi
   docker start ${CONTAINER} # &> /dev/null
 fi
