@@ -121,6 +121,7 @@ alias noxx="lights off main"
 alias podman="docker"
 alias subl=" /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl"
 alias ls='ls --color --group-directories-first'
-alias bonfire="/Users/skateman/Library/Python/3.9/bin/bonfire"
+alias k3sctl='kubectl --context=k3s'
 
 export PATH=:~/.local/bin:$PATH
+alias lzd='lazydocker'

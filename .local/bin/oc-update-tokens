@@ -5,14 +5,16 @@
 require 'yaml'
 
 MANAGED_ENVS = %w[stage prod ephemeral].freeze
+TOLERATED_ENVS = %w[konflux-internal konflux-public k3s].freeze
+ENVS = MANAGED_ENVS + TOLERATED_ENVS
 KUBECONFIG = ENV.fetch('KUBECONFIG', "#{Dir.home}/.kube/config")
 
 kubeconfig = YAML.safe_load_file(KUBECONFIG)
 
-# Drop any unmanaged clusters/contexts/users
-kubeconfig['clusters'].select! { |cluster| MANAGED_ENVS.include?(cluster['name']) }
-kubeconfig['contexts'].select! { |context| MANAGED_ENVS.include?(context['context']['cluster']) }
-kubeconfig['users'].select! { |user| MANAGED_ENVS.include?(user['name'].sub(/.*\//, '')) }
+# Drop any unmanaged/untolerated clusters/contexts/users
+kubeconfig['clusters'].select! { |cluster| ENVS.include?(cluster['name']) }
+kubeconfig['contexts'].select! { |context| ENVS.include?(context['context']['cluster']) }
+kubeconfig['users'].select! { |user| ENVS.include?(user['name'].sub(/.*\//, '')) }
 kubeconfig['current-context'] = 'ephemeral-default'
 
 kubeconfig['clusters'].each do |cluster|
